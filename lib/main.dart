@@ -1,6 +1,8 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 
+import 'dart:developer';
+
 class RandomWords extends StatefulWidget { // RandomWords StatefulWidget
   const RandomWords({Key? key}) : super(key: key);
 
@@ -9,10 +11,48 @@ class RandomWords extends StatefulWidget { // RandomWords StatefulWidget
 }
 
 class _RandomWordsState extends State<RandomWords> { // State of RandomWords StatefulWidget
+  final _suggestions = <WordPair>[]; // WordPair items
+  final _biggerFont = const TextStyle(fontSize: 18.0); // Font size
+
   @override
   Widget build(BuildContext context) { // Return WordPair
-    final wordPair = WordPair.random(); // Get word pair
-    return Text(wordPair.asPascalCase); // Return Text component with word pair
+    // final wordPair = WordPair.random(); // Get word pair
+    // return Text(wordPair.asPascalCase); // Return Text component with word pair
+    return Scaffold( // Return Scaffold
+      appBar: AppBar(
+        title: const Text('Startup Name generator'),
+      ),
+      body: _buildSuggestions(), // Set body as suggestion name list
+    );
+  }
+
+  // Row of suggestion name list
+  Widget _buildRow(WordPair pair) {
+    return ListTile(
+      title: Text(
+        pair.asPascalCase, // Default parameter
+        style: _biggerFont, // Apply font size
+      )
+    );
+  }
+
+  // Suggestion name list
+  Widget _buildSuggestions() {
+    return ListView.builder( // Return ListView
+      padding: const EdgeInsets.all(16.0),
+      itemBuilder: (context, i) { // This function called when row(ListTile) be visible or prepared in ListView Widget height scope
+        if (i.isOdd) { // When index is odd then, add divider ex) [item, div, item, div, item, div ...]
+          return const Divider();
+        }
+
+        final index = i ~/ 2; // Get index of 'only' items (index interfere with divider)
+        if (index >= _suggestions.length) { // If last item then, add 10 word pairs from generateWordPairs function to _suggestions
+          _suggestions.addAll(generateWordPairs().take(10)); // Add word pairs
+        }
+
+        return _buildRow(_suggestions[index]); // Return ListTile
+      }
+    );
   }
 }
 
@@ -22,15 +62,8 @@ class MyApp extends StatelessWidget { // StatelessWidget을 상속함, 앱 자�
   @override
   Widget build(BuildContext context) { // Widget의 주 역할은 다른 하위 수준의 위젯들과 관련해서 위젯을 어떻게 표시해야 하는지를 설명하는 방법을 제공하는 것임
     return MaterialApp(
-      title: 'Welcome to Flutter',
-      home: Scaffold( // Scaffold, Material library, app bar와 홈 화면의 위젯 트리를 보유한 속성을 제공해줌
-        appBar: AppBar(
-          title: const Text('Welcome to Flutter'),
-        ),
-        body: Center( // Center가 Text를 포함하고 있음, 그러하여 Text는 화면 중앙으로 정렬됨 (+ const는 런타임중에 변수를 할당할 수 없어, const keyword는 삭제되었음)
-          child: RandomWords(), // Display random word pair
-        ),
-      ),
+      title: 'Startup Name Generator',
+      home: RandomWords(), // Set home suggestion name list
     );
   }
 }
