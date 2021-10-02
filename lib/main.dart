@@ -38,7 +38,16 @@ class _RandomWordsState extends State<RandomWords> { // State of RandomWords Sta
       trailing: Icon( // Add icon to right side
         alreadySaved ? Icons.favorite : Icons.favorite_border, // Display icon by alreadySaved state
         color: alreadySaved ? Colors.red : null, // Set color by already state
-      )
+      ),
+      onTap: () {
+        setState(() {
+          if (alreadySaved) { // If alreadySaved state is ture
+            _saved.remove(pair); // Then, Remove this word pair from _saved Set
+          } else { // If alreadySaved state if false
+            _saved.add(pair); // Then, Add this word pair to _saved Set
+          }
+        });
+      },
     );
   }
 
