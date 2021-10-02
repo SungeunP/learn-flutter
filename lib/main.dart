@@ -15,13 +15,46 @@ class _RandomWordsState extends State<RandomWords> { // State of RandomWords Sta
   final _saved = <WordPair>{}; // Saved WordPair items
   final _biggerFont = const TextStyle(fontSize: 18.0); // Font size
 
+  // Push route to Navigator
+  void _pushSaved() {
+    Navigator.of(context).push( // Push route
+      MaterialPageRoute<void>( // Page Route
+        builder: (BuildContext context) {
+          final tiles = _saved.map( // Create tiles by `_saved` state
+              (WordPair pair) {
+                return ListTile( // Simple text ListTile
+                  title: Text(
+                    pair.asPascalCase,
+                    style: _biggerFont,
+                  )
+                );
+              }
+          );
+
+          final divided = ListTile.divideTiles( // Set 'Divided ListTiles'
+            context: context,
+            tiles: tiles, // Created tiles
+          ).toList(); // Transform to list
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Saved Suggestions'),
+            ),
+            body: ListView(children: divided), // Append ListTiles to ListView widget
+          );
+        },
+      )
+    );
+  }
+
   @override
   Widget build(BuildContext context) { // Return WordPair
-    // final wordPair = WordPair.random(); // Get word pair
-    // return Text(wordPair.asPascalCase); // Return Text component with word pair
     return Scaffold( // Return Scaffold
       appBar: AppBar(
         title: const Text('Startup Name generator'),
+        actions: [
+          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
+        ]
       ),
       body: _buildSuggestions(), // Set body as suggestion name list
     );
