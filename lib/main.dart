@@ -20,27 +20,40 @@ class _RandomWordsState extends State<RandomWords> { // State of RandomWords Sta
     Navigator.of(context).push( // Push route
       MaterialPageRoute<void>( // Page Route
         builder: (BuildContext context) {
-          final tiles = _saved.map( // Create tiles by `_saved` state
-              (WordPair pair) {
-                return ListTile( // Simple text ListTile
-                  title: Text(
-                    pair.asPascalCase,
-                    style: _biggerFont,
-                  )
-                );
-              }
-          );
+          var bodyContent = null;
+          if (_saved.length <= 0) { // Set empty placeholder when saved is not exist
+            bodyContent = Center(
+                child: Text(
+                    'Not exist saved startup name',
+                  textAlign: TextAlign.center,
+                  style: _biggerFont,
+                ),
+            );
+          } else {
+            final listTiles = _saved.map( // Create tiles by `_saved` state
+                    (WordPair pair) {
+                  return ListTile( // Simple text ListTile
+                      title: Text(
+                        pair.asPascalCase,
+                        style: _biggerFont,
+                      )
+                  );
+                }
+            );
 
-          final divided = ListTile.divideTiles( // Set 'Divided ListTiles'
-            context: context,
-            tiles: tiles, // Created tiles
-          ).toList(); // Transform to list
+            final divided = ListTile.divideTiles( // Set 'Divided ListTiles'
+              context: context,
+              tiles: listTiles, // Created tiles
+            ).toList(); // Transform to list
+
+            bodyContent = ListView(children: divided);
+          }
 
           return Scaffold(
             appBar: AppBar(
               title: Text('Saved Suggestions'),
             ),
-            body: ListView(children: divided), // Append ListTiles to ListView widget
+            body: bodyContent, // Append ListTiles to ListView widget
           );
         },
       )
@@ -111,6 +124,9 @@ class MyApp extends StatelessWidget { // StatelessWidget을 상속함, 앱 자�
   Widget build(BuildContext context) { // Widget의 주 역할은 다른 하위 수준의 위젯들과 관련해서 위젯을 어떻게 표시해야 하는지를 설명하는 방법을 제공하는 것임
     return MaterialApp(
       title: 'Startup Name Generator',
+      theme: ThemeData(
+        primarySwatch: Colors.indigo, // Set theme color
+      ),
       home: RandomWords(), // Set home suggestion name list
     );
   }
